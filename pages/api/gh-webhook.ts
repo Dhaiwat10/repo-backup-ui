@@ -23,8 +23,8 @@ export default async function handler(
 
   if (eventType === 'push') {
     // backup the code to IPFS
-    const repoOwner = req.body.repository.owner.name;
-    const repoName = req.body.repository.name;
+    const repoOwner = (req.body.repository.owner.name as string).toLowerCase();
+    const repoName = (req.body.repository.name as string).toLowerCase();
     const installationId = req.body.installation.id;
 
     const repoContents = await fetch(

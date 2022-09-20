@@ -9,6 +9,5 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  console.log(process.env.GITHUB_APP_PRIVATE_KEY);
   res.status(200).json({ name: 'John Doe' });
 }
