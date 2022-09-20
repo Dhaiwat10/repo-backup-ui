@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import { getFilesFromPath, Filelike, Web3Storage } from 'web3.storage';
 import fetch from 'node-fetch';
+import { supabase } from '../../lib/supabase';
 
 type Data = {
   name: string;
@@ -42,7 +43,18 @@ export default async function handler(
     console.log(`Successfully backed up to IPFS: ${cid}`);
 
     // TODO: save to DB
-  
+    const { error: dbError } = await supabase.from('backups').insert([
+      {
+        repo_owner: repoOwner,
+        repo_name: repoName,
+        backup_cid: cid,
+      },
+    ]);
+
+    console.log({
+      dbError,
+    });
+
     // TODO: create deployment using github API
   }
 
