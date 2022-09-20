@@ -1,16 +1,20 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { createTheme, NextUIProvider } from '@nextui-org/react';
+import { SessionProvider } from 'next-auth/react';
 
 const darkTheme = createTheme({
   type: 'dark',
 });
 
-function MyApp({ Component, pageProps }: AppProps) {
+// @ts-expect-error
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
-    <NextUIProvider theme={darkTheme}>
-      <Component {...pageProps} />
-    </NextUIProvider>
+    <SessionProvider session={session}>
+      <NextUIProvider theme={darkTheme}>
+        <Component {...pageProps} />
+      </NextUIProvider>
+    </SessionProvider>
   );
 }
 
