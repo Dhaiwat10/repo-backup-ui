@@ -4,6 +4,7 @@ import fs from 'fs';
 import { getFilesFromPath, Filelike, Web3Storage } from 'web3.storage';
 import fetch from 'node-fetch';
 import { supabase } from '../../lib/supabase';
+import { getOctokitInstance } from '../../lib/github';
 
 type Data = {
   name: string;
@@ -24,6 +25,7 @@ export default async function handler(
     // backup the code to IPFS
     const repoOwner = req.body.repository.owner.name;
     const repoName = req.body.repository.name;
+    const installationId = req.body.installation.id;
 
     const repoContents = await fetch(
       `https://api.github.com/repos/${repoOwner}/${repoName}/zipball`
@@ -56,6 +58,35 @@ export default async function handler(
     });
 
     // TODO: create deployment using github API
+    const octokit = getOctokitInstance(installationId);
+    const { data } = await octokit.request(
+      'POST /repos/{owner}/{repo}/deployments',
+      {
+        owner: repoOwner,
+        repo: repoName,
+        ref: 'main',
+        payload: JSON.stringify({
+          backup_cid: cid,
+        }),
+        description: 'Backup deployment',
+        task: 'deploy',
+      }
+    );
+
+    // @ts-expect-error
+    const deploymentId = data.id;
+
+    await octokit.request(
+      'POST /repos/{owner}/{repo}/deployments/{deployment_id}/statuses',
+      {
+        owner: repoOwner,
+        repo: repoName,
+        deployment_id: deploymentId,
+        state: 'success',
+        target_url: `https://ipfs.filebase.io/ipfs/${cid}`,
+        log_url: `https://ipfs.filebase.io/ipfs/${cid}`,
+      }
+    );
   }
 
   res.status(200).json({ name: 'John Doe' });
