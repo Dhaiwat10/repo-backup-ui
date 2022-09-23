@@ -15,3 +15,13 @@ export const getOctokitInstance = (installationId: number) => {
 };
 
 export const GITHUB_APP_INSTALLATION_PAGE_URL = `https://github.com/apps/${process.env.NEXT_PUBLIC_GITHUB_APP_NAME}/installations/new`;
+
+export const getLinkToCommit = (
+  repoOwner: string,
+  repoName: string,
+  commitHash: string
+) => {
+  const repoNameCleaned = repoName.trim().toLowerCase();
+  const repoOwnerCleaned = repoOwner.trim().toLowerCase();
+  return `https://github.com/${repoOwnerCleaned}/${repoNameCleaned}/commit/${commitHash}`;
+};

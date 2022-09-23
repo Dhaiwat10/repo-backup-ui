@@ -12,7 +12,10 @@ import {
 import type { NextPage } from 'next';
 import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
-import { GITHUB_APP_INSTALLATION_PAGE_URL } from '../lib/github';
+import {
+  getLinkToCommit,
+  GITHUB_APP_INSTALLATION_PAGE_URL,
+} from '../lib/github';
 
 const Container = styled('div', {
   display: 'flex',
@@ -28,6 +31,7 @@ interface SearchResult {
   repo_owner: string;
   repo_name: string;
   backup_cid: string;
+  commit_hash: string;
 }
 
 const Home: NextPage = () => {
@@ -146,13 +150,27 @@ const Home: NextPage = () => {
         <Table>
           <Table.Header>
             <Table.Column>REPO NAME</Table.Column>
+            <Table.Column>COMMIT HASH</Table.Column>
             <Table.Column>IPFS BACKUP</Table.Column>
           </Table.Header>
           <Table.Body>
             {searchResults.map((result) => (
               <Table.Row key={result.id}>
                 <Table.Cell>
-                  {result.repo_owner}/{result.repo_name}
+                  {result.repo_owner.trim()}/{result.repo_name}
+                </Table.Cell>
+                <Table.Cell>
+                  <a
+                    href={getLinkToCommit(
+                      result.repo_owner,
+                      result.repo_name,
+                      result.commit_hash
+                    )}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {result.commit_hash.substring(0, 7)}
+                  </a>
                 </Table.Cell>
                 <Table.Cell>
                   <a
@@ -160,7 +178,7 @@ const Home: NextPage = () => {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {result.backup_cid}
+                    {result.backup_cid.substring(0, 10)}...
                   </a>
                 </Table.Cell>
               </Table.Row>
