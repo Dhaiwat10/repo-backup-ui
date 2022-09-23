@@ -26,6 +26,7 @@ export default async function handler(
     const repoOwner = (req.body.repository.owner.name as string).toLowerCase();
     const repoName = (req.body.repository.name as string).toLowerCase();
     const installationId = req.body.installation.id;
+    const commitSha = req.body.head_commit.id;
 
     const repoContents = await fetch(
       `https://api.github.com/repos/${repoOwner}/${repoName}/zipball`
@@ -50,6 +51,7 @@ export default async function handler(
         repo_owner: repoOwner,
         repo_name: repoName,
         backup_cid: cid,
+        commit_hash: commitSha,
       },
     ]);
 
