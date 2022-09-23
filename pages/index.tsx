@@ -56,7 +56,6 @@ const Home: NextPage = () => {
       `/api/db-query?repo_owner=${searchRepoOwner}&repo_name=${searchRepoName}`
     );
     const data = await res.json();
-    console.log(data);
     setSearchResults(data.backups);
   };
 
@@ -84,8 +83,10 @@ const Home: NextPage = () => {
         </Modal.Body>
       </Modal>
 
-      <Text h1>Effortlessly backup your repositories</Text>
-      <Text h4>Built on top of IPFS, Filecoin and web3.storage</Text>
+      <Text h1>Effortlessly backup your GitHub repos</Text>
+      <Text css={{ mt: '$4' }}>
+        Built on top of IPFS, Filecoin and web3.storage
+      </Text>
 
       {session ? (
         <div>
@@ -109,7 +110,8 @@ const Home: NextPage = () => {
 
       <Divider
         css={{
-          my: '$16',
+          mt: '$16',
+          mb: '$8',
         }}
       />
 
@@ -132,10 +134,11 @@ const Home: NextPage = () => {
           placeholder="Repository name"
           value={searchRepoName}
           onChange={(e) => setSearchRepoName(e.target.value)}
+          css={{ ml: '$8' }}
         />
       </Grid>
 
-      <Button onClick={handleSearch} css={{ w: 'fit-content' }}>
+      <Button onClick={handleSearch} css={{ w: 'fit-content', mt: '$8' }}>
         Search
       </Button>
 

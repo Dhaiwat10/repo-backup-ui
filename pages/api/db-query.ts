@@ -18,8 +18,6 @@ export default async function handler(
     .textSearch('repo_name', repoName)
     .textSearch('repo_owner', repoOwner);
 
-  console.log(data);
-
   if (error) {
     return res.status(500).json({ error: error.message });
   }
