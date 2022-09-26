@@ -28,25 +28,28 @@ export default async function handler(
     const installationId = req.body.installation.id;
     const commitSha = req.body.head_commit.id;
 
-    // create check run
-    const octokit = getOctokitInstance(installationId);
-    const { data } = await octokit.request(
-      'POST /repos/{owner}/{repo}/check-runs',
-      {
-        owner: repoOwner,
-        repo: repoName,
-        name: 'Backup',
-        head_sha: commitSha,
-        status: 'in_progress',
-        started_at: new Date().toISOString(),
-      }
-    );
+    let checkRunId: number;
 
-    const checkRunId = data.id;
+    const octokit = getOctokitInstance(installationId);
 
     try {
       // TODO: support custom branch names
       if (branchName === 'main' || branchName === 'master') {
+        // create check run
+        const { data } = await octokit.request(
+          'POST /repos/{owner}/{repo}/check-runs',
+          {
+            owner: repoOwner,
+            repo: repoName,
+            name: 'Backup',
+            head_sha: commitSha,
+            status: 'in_progress',
+            started_at: new Date().toISOString(),
+          }
+        );
+
+        checkRunId = data.id;
+
         const repoContents = await fetch(
           `https://api.github.com/repos/${repoOwner}/${repoName}/zipball`
         );
@@ -104,6 +107,7 @@ export default async function handler(
         {
           owner: repoOwner,
           repo: repoName,
+          // @ts-expect-error
           check_run_id: checkRunId,
           conclusion: 'failure',
           // @ts-expect-error
