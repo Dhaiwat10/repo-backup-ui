@@ -6,17 +6,13 @@ import fetch from 'node-fetch';
 import { supabase } from '../../lib/supabase';
 import { getOctokitInstance } from '../../lib/github';
 
-type Data = {
-  name: string;
-};
-
 const web3StorageClient = new Web3Storage({
   token: process.env.WEB3_STORAGE_TOKEN as string,
 });
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse
 ) {
   console.log(req.headers['x-github-event']);
   const eventType = req.headers['x-github-event'];
